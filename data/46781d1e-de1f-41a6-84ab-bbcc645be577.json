@@ -1,0 +1,100 @@
+{
+  "id": "46781d1e-de1f-41a6-84ab-bbcc645be577",
+  "workflow_name": "file-processing-workflow",
+  "status": "completed",
+  "start_time": "2025-07-29T19:12:06.994277831Z",
+  "end_time": "2025-07-29T19:12:06.999511171Z",
+  "context": {
+    "event": {
+      "type": "file.created",
+      "payload": {
+        "file_dir": "workflows",
+        "file_ext": ".backup",
+        "file_name": "test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "file_path": "workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup"
+      },
+      "metadata": {
+        "operation": "CREATE"
+      },
+      "timestamp": 1753816326
+    },
+    "variables": {
+      "backup_file": {
+        "command": "cp workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "exit_code": 0,
+        "output": "",
+        "success": true
+      },
+      "log_file_event": {
+        "level": "info",
+        "message": "New file detected: workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      },
+      "notify_processing_complete": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      }
+    }
+  },
+  "steps": [
+    {
+      "name": "log_file_event",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.994413281Z",
+      "end_time": "2025-07-29T19:12:06.994485501Z",
+      "input": {
+        "fields": "map[file_ext:.backup file_name:test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup]",
+        "message": "New file detected: workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup"
+      },
+      "output": {
+        "level": "info",
+        "message": "New file detected: workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "process_text_file",
+      "status": "skipped",
+      "start_time": "2025-07-29T19:12:06.994660801Z",
+      "end_time": "2025-07-29T19:12:06.994684051Z",
+      "input": {},
+      "output": null,
+      "retries": 0
+    },
+    {
+      "name": "backup_file",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.994684361Z",
+      "end_time": "2025-07-29T19:12:06.998705601Z",
+      "input": {
+        "command": "cp workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "timeout": "30"
+      },
+      "output": {
+        "command": "cp workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "exit_code": 0,
+        "output": "",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "notify_processing_complete",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.999000441Z",
+      "end_time": "2025-07-29T19:12:06.999065921Z",
+      "input": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup"
+      },
+      "output": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      },
+      "retries": 0
+    }
+  ]
+}

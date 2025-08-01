@@ -1,0 +1,62 @@
+{
+  "id": "711fa575-48ad-45c3-9acf-6027cfe88eac",
+  "workflow_name": "customer-creation-workflow",
+  "status": "failed",
+  "start_time": "2025-07-29T19:11:52.931924273Z",
+  "end_time": "2025-07-29T19:11:59.262292173Z",
+  "context": {
+    "event": {
+      "type": "customer.created",
+      "payload": {
+        "email": "john@example.com",
+        "id": "12345",
+        "name": "John Doe"
+      },
+      "metadata": {
+        "remote_addr": "127.0.0.1:43940",
+        "user_agent": "curl/8.14.1"
+      },
+      "timestamp": 1753816312
+    },
+    "variables": {
+      "validate_customer_data": {
+        "level": "info",
+        "message": "Processing new customer: John Doe",
+        "success": true
+      }
+    }
+  },
+  "steps": [
+    {
+      "name": "validate_customer_data",
+      "status": "completed",
+      "start_time": "2025-07-29T19:11:52.932254573Z",
+      "end_time": "2025-07-29T19:11:52.932327833Z",
+      "input": {
+        "level": "info",
+        "message": "Processing new customer: John Doe"
+      },
+      "output": {
+        "level": "info",
+        "message": "Processing new customer: John Doe",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "notify_team",
+      "status": "failed",
+      "start_time": "2025-07-29T19:11:52.932462343Z",
+      "end_time": "2025-07-29T19:11:59.262292173Z",
+      "input": {
+        "body": "map[text:New customer created: John Doe (john@example.com)]",
+        "method": "POST",
+        "url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      },
+      "output": null,
+      "error": "HTTP request failed with status 404",
+      "retries": 2
+    }
+  ],
+  "error": "Step 'notify_team' failed: HTTP request failed with status 404"
+}

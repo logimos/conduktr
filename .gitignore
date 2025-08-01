@@ -1,0 +1,9 @@
+conduktr
+.env
+.DS_Store
+.idea
+.vscode
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

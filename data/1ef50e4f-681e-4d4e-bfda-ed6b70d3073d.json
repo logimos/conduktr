@@ -1,0 +1,100 @@
+{
+  "id": "1ef50e4f-681e-4d4e-bfda-ed6b70d3073d",
+  "workflow_name": "file-processing-workflow",
+  "status": "completed",
+  "start_time": "2025-07-29T19:12:07.031191947Z",
+  "end_time": "2025-07-29T19:12:07.036802907Z",
+  "context": {
+    "event": {
+      "type": "file.created",
+      "payload": {
+        "file_dir": "workflows",
+        "file_ext": ".backup",
+        "file_name": "test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "file_path": "workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup"
+      },
+      "metadata": {
+        "operation": "CREATE"
+      },
+      "timestamp": 1753816327
+    },
+    "variables": {
+      "backup_file": {
+        "command": "cp workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "exit_code": 0,
+        "output": "",
+        "success": true
+      },
+      "log_file_event": {
+        "level": "info",
+        "message": "New file detected: workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      },
+      "notify_processing_complete": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      }
+    }
+  },
+  "steps": [
+    {
+      "name": "log_file_event",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:07.031307777Z",
+      "end_time": "2025-07-29T19:12:07.031403817Z",
+      "input": {
+        "fields": "map[file_ext:.backup file_name:test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup]",
+        "message": "New file detected: workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup"
+      },
+      "output": {
+        "level": "info",
+        "message": "New file detected: workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "process_text_file",
+      "status": "skipped",
+      "start_time": "2025-07-29T19:12:07.031691227Z",
+      "end_time": "2025-07-29T19:12:07.031716437Z",
+      "input": {},
+      "output": null,
+      "retries": 0
+    },
+    {
+      "name": "backup_file",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:07.031716787Z",
+      "end_time": "2025-07-29T19:12:07.035981627Z",
+      "input": {
+        "command": "cp workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "timeout": "30"
+      },
+      "output": {
+        "command": "cp workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup workflows/test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "exit_code": 0,
+        "output": "",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "notify_processing_complete",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:07.036276897Z",
+      "end_time": "2025-07-29T19:12:07.036335357Z",
+      "input": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup"
+      },
+      "output": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup.backup",
+        "success": true
+      },
+      "retries": 0
+    }
+  ]
+}

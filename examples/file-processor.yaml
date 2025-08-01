@@ -1,0 +1,29 @@
+name: file-processing-workflow
+on:
+  event: file.created
+
+workflow:
+  - name: log_file_event
+    action: log.info
+    message: "New file detected: {{ .event.payload.file_path }}"
+    fields:
+      file_name: "{{ .event.payload.file_name }}"
+      file_ext: "{{ .event.payload.file_ext }}"
+
+  - name: process_text_file
+    action: shell.exec
+    command: "wc -l {{ .event.payload.file_path }}"
+    if: "{{ eq .event.payload.file_ext \".txt\" }}"
+    retry:
+      max: 2
+      backoff: exponential
+
+  - name: backup_file
+    action: shell.exec
+    command: "cp {{ .event.payload.file_path }} {{ .event.payload.file_path }}.backup"
+    timeout: 30
+
+  - name: notify_processing_complete
+    action: log.info
+    message: "File processing completed for {{ .event.payload.file_name }}"
+    level: info

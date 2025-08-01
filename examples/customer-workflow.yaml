@@ -1,0 +1,32 @@
+name: customer-creation-workflow
+on:
+  event: customer.created
+
+workflow:
+  - name: validate_customer_data
+    action: log.info
+    message: "Processing new customer: {{ .event.payload.name }}"
+    level: info
+
+  - name: notify_team
+    action: http.request
+    url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+    method: POST
+    body:
+      text: "New customer created: {{ .event.payload.name }} ({{ .event.payload.email }})"
+    if: "{{ .event.payload.name }}"
+    retry:
+      max: 3
+      backoff: exponential
+
+  - name: create_welcome_file
+    action: shell.exec
+    command: "echo 'Welcome {{ .event.payload.name }}!' > /tmp/welcome-{{ .event.payload.id }}.txt"
+    timeout: 10
+
+  - name: log_completion
+    action: log.info
+    message: "Customer workflow completed for {{ .event.payload.name }}"
+    fields:
+      customer_id: "{{ .event.payload.id }}"
+      customer_email: "{{ .event.payload.email }}"

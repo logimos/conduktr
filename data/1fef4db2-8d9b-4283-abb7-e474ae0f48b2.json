@@ -1,0 +1,113 @@
+{
+  "id": "1fef4db2-8d9b-4283-abb7-e474ae0f48b2",
+  "workflow_name": "file-processing-workflow",
+  "status": "completed",
+  "start_time": "2025-07-29T19:12:06.91460991Z",
+  "end_time": "2025-07-29T19:12:06.935177918Z",
+  "context": {
+    "event": {
+      "type": "file.created",
+      "payload": {
+        "file_dir": "workflows",
+        "file_ext": ".txt",
+        "file_name": "test-data.txt",
+        "file_path": "workflows/test-data.txt"
+      },
+      "metadata": {
+        "operation": "CREATE"
+      },
+      "timestamp": 1753816326
+    },
+    "variables": {
+      "backup_file": {
+        "command": "cp workflows/test-data.txt workflows/test-data.txt.backup",
+        "exit_code": 0,
+        "output": "",
+        "success": true
+      },
+      "log_file_event": {
+        "level": "info",
+        "message": "New file detected: workflows/test-data.txt",
+        "success": true
+      },
+      "notify_processing_complete": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt",
+        "success": true
+      },
+      "process_text_file": {
+        "command": "wc -l workflows/test-data.txt",
+        "exit_code": 0,
+        "output": "1 workflows/test-data.txt\n",
+        "success": true
+      }
+    }
+  },
+  "steps": [
+    {
+      "name": "log_file_event",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.91476964Z",
+      "end_time": "2025-07-29T19:12:06.91485475Z",
+      "input": {
+        "fields": "map[file_ext:.txt file_name:test-data.txt]",
+        "message": "New file detected: workflows/test-data.txt"
+      },
+      "output": {
+        "level": "info",
+        "message": "New file detected: workflows/test-data.txt",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "process_text_file",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.91498123Z",
+      "end_time": "2025-07-29T19:12:06.923226769Z",
+      "input": {
+        "command": "wc -l workflows/test-data.txt"
+      },
+      "output": {
+        "command": "wc -l workflows/test-data.txt",
+        "exit_code": 0,
+        "output": "1 workflows/test-data.txt\n",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "backup_file",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.923329019Z",
+      "end_time": "2025-07-29T19:12:06.927562018Z",
+      "input": {
+        "command": "cp workflows/test-data.txt workflows/test-data.txt.backup",
+        "timeout": "30"
+      },
+      "output": {
+        "command": "cp workflows/test-data.txt workflows/test-data.txt.backup",
+        "exit_code": 0,
+        "output": "",
+        "success": true
+      },
+      "retries": 0
+    },
+    {
+      "name": "notify_processing_complete",
+      "status": "completed",
+      "start_time": "2025-07-29T19:12:06.927864578Z",
+      "end_time": "2025-07-29T19:12:06.928044569Z",
+      "input": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt"
+      },
+      "output": {
+        "level": "info",
+        "message": "File processing completed for test-data.txt",
+        "success": true
+      },
+      "retries": 0
+    }
+  ]
+}
