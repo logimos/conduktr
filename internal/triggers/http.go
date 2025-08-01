@@ -61,6 +61,14 @@ func (h *HTTPTrigger) RegisterAdvancedRoutes(analyticsDashboard interface{}, aiB
 	}
 }
 
+// RegisterMarketplaceRoutes registers marketplace routes
+func (h *HTTPTrigger) RegisterMarketplaceRoutes(marketplaceService interface{}) {
+	if marketplace, ok := marketplaceService.(interface{ RegisterMarketplaceRoutes(*mux.Router) }); ok {
+		marketplace.RegisterMarketplaceRoutes(h.router)
+		h.logger.Info("Registered marketplace routes")
+	}
+}
+
 // Start starts the HTTP trigger server
 func (h *HTTPTrigger) Start() error {
 	// Advanced Dashboard endpoint

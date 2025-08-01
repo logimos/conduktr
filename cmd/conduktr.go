@@ -111,7 +111,7 @@ func runDaemon(cmd *cobra.Command, args []string) error {
 
 	// Initialize advanced services
 	_ = web.NewDesignerService()
-	_ = marketplace.NewMarketplaceService()
+	marketplaceService := marketplace.NewMarketplaceService()
 	analyticsDashboard := analytics.NewAnalyticsDashboard(logger)
 	aiBuilder := ai.NewAIWorkflowBuilder(logger)
 	integrationHub := integrations.NewIntegrationHub(logger)
@@ -129,6 +129,9 @@ func runDaemon(cmd *cobra.Command, args []string) error {
 
 	// Register advanced service routes
 	httpTrigger.RegisterAdvancedRoutes(analyticsDashboard, aiBuilder, integrationHub)
+
+	// Register marketplace routes
+	httpTrigger.RegisterMarketplaceRoutes(marketplaceService)
 
 	go func() {
 		if err := httpTrigger.Start(); err != nil {

@@ -14,11 +14,11 @@ import (
 
 // AIWorkflowBuilder provides intelligent workflow creation capabilities
 type AIWorkflowBuilder struct {
-	logger             *zap.Logger
-	nlpProcessor       *NLPProcessor
-	patternLibrary     *PatternLibrary
-	suggestionEngine   *SuggestionEngine
-	validationEngine   *ValidationEngine
+	logger           *zap.Logger
+	nlpProcessor     *NLPProcessor
+	patternLibrary   *PatternLibrary
+	suggestionEngine *SuggestionEngine
+	validationEngine *ValidationEngine
 }
 
 // NLPProcessor handles natural language workflow descriptions
@@ -59,10 +59,10 @@ type ValidationEngine struct {
 
 // ValidationRule defines a workflow validation constraint
 type ValidationRule struct {
-	Name        string                                      `json:"name"`
-	Description string                                      `json:"description"`
+	Name        string                                     `json:"name"`
+	Description string                                     `json:"description"`
 	Check       func(workflow map[string]interface{}) bool `json:"-"`
-	Suggestion  string                                      `json:"suggestion"`
+	Suggestion  string                                     `json:"suggestion"`
 }
 
 // WorkflowRequest represents a natural language workflow creation request
@@ -74,36 +74,36 @@ type WorkflowRequest struct {
 
 // WorkflowSuggestion represents an AI-generated workflow suggestion
 type WorkflowSuggestion struct {
-	ID          string                 `json:"id"`
-	Name        string                 `json:"name"`
-	Description string                 `json:"description"`
-	Workflow    map[string]interface{} `json:"workflow"`
-	Confidence  float64                `json:"confidence"`
-	Steps       []SuggestedStep        `json:"steps"`
-	Alternatives []WorkflowSuggestion  `json:"alternatives,omitempty"`
+	ID           string                 `json:"id"`
+	Name         string                 `json:"name"`
+	Description  string                 `json:"description"`
+	Workflow     map[string]interface{} `json:"workflow"`
+	Confidence   float64                `json:"confidence"`
+	Steps        []SuggestedStep        `json:"steps"`
+	Alternatives []WorkflowSuggestion   `json:"alternatives,omitempty"`
 }
 
 // SuggestedStep represents a workflow step with AI suggestions
 type SuggestedStep struct {
-	Type        string                 `json:"type"`
-	Action      string                 `json:"action"`
-	Parameters  map[string]interface{} `json:"parameters"`
-	Description string                 `json:"description"`
-	Confidence  float64                `json:"confidence"`
-	Alternatives []string              `json:"alternatives,omitempty"`
+	Type         string                 `json:"type"`
+	Action       string                 `json:"action"`
+	Parameters   map[string]interface{} `json:"parameters"`
+	Description  string                 `json:"description"`
+	Confidence   float64                `json:"confidence"`
+	Alternatives []string               `json:"alternatives,omitempty"`
 }
 
 // NewAIWorkflowBuilder creates a new AI workflow builder
 func NewAIWorkflowBuilder(logger *zap.Logger) *AIWorkflowBuilder {
 	builder := &AIWorkflowBuilder{
-		logger:             logger,
-		nlpProcessor:       initializeNLPProcessor(),
-		patternLibrary:     initializePatternLibrary(),
-		suggestionEngine:   &SuggestionEngine{
+		logger:         logger,
+		nlpProcessor:   initializeNLPProcessor(),
+		patternLibrary: initializePatternLibrary(),
+		suggestionEngine: &SuggestionEngine{
 			contextHistory: make([]string, 0),
 			userPatterns:   make(map[string]int),
 		},
-		validationEngine:   initializeValidationEngine(),
+		validationEngine: initializeValidationEngine(),
 	}
 
 	return builder
@@ -112,7 +112,7 @@ func NewAIWorkflowBuilder(logger *zap.Logger) *AIWorkflowBuilder {
 // RegisterRoutes sets up the AI workflow builder API endpoints
 func (ai *AIWorkflowBuilder) RegisterRoutes(router *mux.Router) {
 	api := router.PathPrefix("/ai").Subrouter()
-	
+
 	// AI builder endpoints
 	api.HandleFunc("/builder", ai.handleBuilderPage).Methods("GET")
 	api.HandleFunc("/api/generate", ai.handleGenerateWorkflow).Methods("POST")
@@ -139,7 +139,7 @@ func (ai *AIWorkflowBuilder) handleGenerateWorkflow(w http.ResponseWriter, r *ht
 	ai.logger.Info("Generating workflow from description", zap.String("description", req.Description))
 
 	suggestion := ai.generateWorkflowFromNL(req.Description)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(suggestion)
 }
@@ -153,7 +153,7 @@ func (ai *AIWorkflowBuilder) handleSuggestSteps(w http.ResponseWriter, r *http.R
 	}
 
 	suggestions := ai.suggestNextSteps(context)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(suggestions)
 }
@@ -167,7 +167,7 @@ func (ai *AIWorkflowBuilder) handleValidateWorkflow(w http.ResponseWriter, r *ht
 	}
 
 	validation := ai.validateWorkflow(workflow)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(validation)
 }
@@ -175,9 +175,9 @@ func (ai *AIWorkflowBuilder) handleValidateWorkflow(w http.ResponseWriter, r *ht
 // handleGetPatterns returns available workflow patterns
 func (ai *AIWorkflowBuilder) handleGetPatterns(w http.ResponseWriter, r *http.Request) {
 	category := r.URL.Query().Get("category")
-	
+
 	patterns := ai.getPatterns(category)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(patterns)
 }
@@ -188,14 +188,14 @@ func (ai *AIWorkflowBuilder) handleAutoComplete(w http.ResponseWriter, r *http.R
 		Partial string `json:"partial"`
 		Context string `json:"context"`
 	}
-	
+
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	completions := ai.getAutoCompletions(req.Partial, req.Context)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(completions)
 }
@@ -203,17 +203,17 @@ func (ai *AIWorkflowBuilder) handleAutoComplete(w http.ResponseWriter, r *http.R
 // generateWorkflowFromNL converts natural language to workflow
 func (ai *AIWorkflowBuilder) generateWorkflowFromNL(description string) WorkflowSuggestion {
 	ai.logger.Info("Processing natural language description", zap.String("description", description))
-	
+
 	// Parse triggers from description
 	triggers := ai.nlpProcessor.extractTriggers(description)
 	actions := ai.nlpProcessor.extractActions(description)
-	
+
 	// Find matching patterns
 	patterns := ai.findMatchingPatterns(triggers, actions)
-	
+
 	// Generate workflow structure
 	workflow := ai.buildWorkflowFromPatterns(patterns, description)
-	
+
 	return WorkflowSuggestion{
 		ID:          generateSuggestionID(),
 		Name:        ai.generateWorkflowName(description),
@@ -228,13 +228,13 @@ func (ai *AIWorkflowBuilder) generateWorkflowFromNL(description string) Workflow
 func (nlp *NLPProcessor) extractTriggers(text string) []string {
 	var triggers []string
 	text = strings.ToLower(text)
-	
+
 	for trigger, pattern := range nlp.triggerPatterns {
 		if pattern.MatchString(text) {
 			triggers = append(triggers, trigger)
 		}
 	}
-	
+
 	return triggers
 }
 
@@ -242,27 +242,27 @@ func (nlp *NLPProcessor) extractTriggers(text string) []string {
 func (nlp *NLPProcessor) extractActions(text string) []string {
 	var actions []string
 	text = strings.ToLower(text)
-	
+
 	for action, pattern := range nlp.actionPatterns {
 		if pattern.MatchString(text) {
 			actions = append(actions, action)
 		}
 	}
-	
+
 	return actions
 }
 
 // findMatchingPatterns finds relevant workflow patterns
 func (ai *AIWorkflowBuilder) findMatchingPatterns(triggers, actions []string) []WorkflowPattern {
 	var matches []WorkflowPattern
-	
+
 	for _, pattern := range ai.patternLibrary.Patterns {
 		score := ai.calculatePatternMatch(pattern, triggers, actions)
 		if score > 0.3 { // 30% confidence threshold
 			matches = append(matches, pattern)
 		}
 	}
-	
+
 	return matches
 }
 
@@ -270,7 +270,7 @@ func (ai *AIWorkflowBuilder) findMatchingPatterns(triggers, actions []string) []
 func (ai *AIWorkflowBuilder) calculatePatternMatch(pattern WorkflowPattern, triggers, actions []string) float64 {
 	triggerMatch := ai.calculateArrayOverlap(pattern.Triggers, triggers)
 	actionMatch := ai.calculateArrayOverlap(pattern.Actions, actions)
-	
+
 	return (triggerMatch + actionMatch) / 2.0
 }
 
@@ -279,18 +279,18 @@ func (ai *AIWorkflowBuilder) calculateArrayOverlap(arr1, arr2 []string) float64 
 	if len(arr1) == 0 || len(arr2) == 0 {
 		return 0.0
 	}
-	
+
 	matches := 0
 	for _, item1 := range arr1 {
 		for _, item2 := range arr2 {
 			if strings.Contains(strings.ToLower(item1), strings.ToLower(item2)) ||
-			   strings.Contains(strings.ToLower(item2), strings.ToLower(item1)) {
+				strings.Contains(strings.ToLower(item2), strings.ToLower(item1)) {
 				matches++
 				break
 			}
 		}
 	}
-	
+
 	return float64(matches) / float64(len(arr1))
 }
 
@@ -299,20 +299,20 @@ func (ai *AIWorkflowBuilder) buildWorkflowFromPatterns(patterns []WorkflowPatter
 	if len(patterns) == 0 {
 		return ai.buildGenericWorkflow(description)
 	}
-	
+
 	// Use the best matching pattern as base
 	bestPattern := patterns[0]
 	workflow := make(map[string]interface{})
-	
+
 	// Copy pattern template
 	for key, value := range bestPattern.Template {
 		workflow[key] = value
 	}
-	
+
 	// Customize based on description
 	workflow["name"] = ai.generateWorkflowName(description)
 	workflow["description"] = description
-	
+
 	return workflow
 }
 
@@ -352,7 +352,7 @@ func (ai *AIWorkflowBuilder) generateWorkflowName(description string) string {
 // generateSteps converts workflow to suggested steps
 func (ai *AIWorkflowBuilder) generateSteps(workflow map[string]interface{}) []SuggestedStep {
 	var steps []SuggestedStep
-	
+
 	if stepsData, exists := workflow["steps"]; exists {
 		if stepsList, ok := stepsData.([]map[string]interface{}); ok {
 			for _, step := range stepsList {
@@ -366,7 +366,7 @@ func (ai *AIWorkflowBuilder) generateSteps(workflow map[string]interface{}) []Su
 			}
 		}
 	}
-	
+
 	return steps
 }
 
@@ -374,24 +374,46 @@ func (ai *AIWorkflowBuilder) generateSteps(workflow map[string]interface{}) []Su
 func initializeNLPProcessor() *NLPProcessor {
 	return &NLPProcessor{
 		triggerPatterns: map[string]*regexp.Regexp{
-			"http":      regexp.MustCompile(`(when|if).*(request|http|api|webhook|post|get)`),
-			"file":      regexp.MustCompile(`(when|if).*(file|upload|create|modify|change)`),
-			"schedule":  regexp.MustCompile(`(every|daily|weekly|hourly|schedule|cron)`),
-			"email":     regexp.MustCompile(`(when|if).*(email|mail|message|receive)`),
-			"database":  regexp.MustCompile(`(when|if).*(database|db|record|insert|update)`),
+			"http.request":    regexp.MustCompile(`(?i)(http|api|webhook|request|endpoint|url)`),
+			"file.created":    regexp.MustCompile(`(?i)(file|upload|document|created|added|new file)`),
+			"file.modified":   regexp.MustCompile(`(?i)(file.*modified|file.*changed|file.*updated)`),
+			"file.deleted":    regexp.MustCompile(`(?i)(file.*deleted|file.*removed|file.*trashed)`),
+			"database.change": regexp.MustCompile(`(?i)(database|db|record|table|insert|update|delete)`),
+			"user.created":    regexp.MustCompile(`(?i)(user|customer|member|account|signup|register|created)`),
+			"user.updated":    regexp.MustCompile(`(?i)(user.*updated|profile.*changed|account.*modified)`),
+			"order.created":   regexp.MustCompile(`(?i)(order|purchase|transaction|payment|checkout|buy)`),
+			"email.received":  regexp.MustCompile(`(?i)(email|mail|message|inbox|received)`),
+			"scheduled":       regexp.MustCompile(`(?i)(schedule|time|daily|weekly|monthly|cron|periodic)`),
+			"error.occurred":  regexp.MustCompile(`(?i)(error|exception|failure|crash|alert|issue)`),
+			"system.event":    regexp.MustCompile(`(?i)(system|server|service|application|app)`),
 		},
 		actionPatterns: map[string]*regexp.Regexp{
-			"send_email":    regexp.MustCompile(`(send|email|notify|mail)`),
-			"http_request":  regexp.MustCompile(`(call|request|api|post|get|send)`),
-			"log":          regexp.MustCompile(`(log|record|track|save)`),
-			"transform":    regexp.MustCompile(`(transform|convert|process|modify)`),
-			"store":        regexp.MustCompile(`(store|save|database|persist)`),
+			"email.send":      regexp.MustCompile(`(?i)(email|mail|send|notify|alert|message)`),
+			"http.request":    regexp.MustCompile(`(?i)(http|api|call|request|fetch|get|post|put|delete)`),
+			"database.insert": regexp.MustCompile(`(?i)(database|db|insert|save|store|create.*record)`),
+			"database.update": regexp.MustCompile(`(?i)(database.*update|db.*update|modify.*record|change.*data)`),
+			"file.process":    regexp.MustCompile(`(?i)(file|process|transform|convert|parse|read|write)`),
+			"file.move":       regexp.MustCompile(`(?i)(move.*file|copy.*file|transfer.*file|backup)`),
+			"notification":    regexp.MustCompile(`(?i)(notification|push|sms|slack|discord|teams|alert)`),
+			"log.info":        regexp.MustCompile(`(?i)(log|record|track|audit|monitor|trace)`),
+			"shell.exec":      regexp.MustCompile(`(?i)(shell|command|script|execute|run|bash|cmd)`),
+			"transform.data":  regexp.MustCompile(`(?i)(transform|convert|format|parse|extract|process.*data)`),
+			"validate.input":  regexp.MustCompile(`(?i)(validate|check|verify|test|ensure|confirm)`),
+			"wait.delay":      regexp.MustCompile(`(?i)(wait|delay|sleep|pause|timeout|retry)`),
+			"condition.if":    regexp.MustCompile(`(?i)(if|condition|check.*if|when.*then|unless)`),
 		},
 		commonPhrases: map[string]string{
-			"when a user signs up":     "user registration trigger",
-			"send welcome email":       "email notification action",
-			"process payment":          "payment processing action",
-			"update database":          "database update action",
+			"when":    "trigger",
+			"if":      "condition",
+			"then":    "action",
+			"send":    "email.send",
+			"create":  "database.insert",
+			"update":  "database.update",
+			"delete":  "database.delete",
+			"process": "file.process",
+			"notify":  "notification",
+			"log":     "log.info",
+			"wait":    "wait.delay",
 		},
 	}
 }
@@ -405,17 +427,17 @@ func initializePatternLibrary() *PatternLibrary {
 				Name:        "User Onboarding",
 				Description: "Handle new user registration and onboarding",
 				Category:    "User Management",
-				Triggers:    []string{"http", "user.created"},
-				Actions:     []string{"send_email", "create_account", "log"},
+				Triggers:    []string{"user.created", "http.request"},
+				Actions:     []string{"email.send", "database.insert", "log.info"},
 				Template: map[string]interface{}{
 					"name": "user-onboarding-workflow",
-					"triggers": []map[string]interface{}{
-						{"type": "http", "path": "/user/register"},
+					"on": map[string]interface{}{
+						"event": "user.created",
 					},
-					"steps": []map[string]interface{}{
-						{"name": "send-welcome", "action": "email.send"},
-						{"name": "create-profile", "action": "database.insert"},
-						{"name": "log-registration", "action": "log.info"},
+					"workflow": []map[string]interface{}{
+						{"name": "send-welcome", "action": "email.send", "message": "Welcome {{ .event.payload.name }}!"},
+						{"name": "create-profile", "action": "database.insert", "table": "users"},
+						{"name": "log-registration", "action": "log.info", "message": "New user registered"},
 					},
 				},
 				Usage: 45,
@@ -426,21 +448,112 @@ func initializePatternLibrary() *PatternLibrary {
 				Name:        "File Processing",
 				Description: "Process uploaded files and perform operations",
 				Category:    "File Management",
-				Triggers:    []string{"file", "upload"},
-				Actions:     []string{"validate", "transform", "store"},
+				Triggers:    []string{"file.created", "file.modified"},
+				Actions:     []string{"file.process", "validate.input", "transform.data"},
 				Template: map[string]interface{}{
 					"name": "file-processing-workflow",
-					"triggers": []map[string]interface{}{
-						{"type": "file", "path": "/uploads"},
+					"on": map[string]interface{}{
+						"event": "file.created",
 					},
-					"steps": []map[string]interface{}{
-						{"name": "validate-file", "action": "file.validate"},
-						{"name": "process-content", "action": "file.transform"},
-						{"name": "store-result", "action": "storage.save"},
+					"workflow": []map[string]interface{}{
+						{"name": "validate-file", "action": "validate.input", "type": "file"},
+						{"name": "process-content", "action": "file.process", "operation": "parse"},
+						{"name": "transform-data", "action": "transform.data", "format": "json"},
+						{"name": "store-result", "action": "database.insert", "table": "processed_files"},
 					},
 				},
 				Usage: 32,
 				Tags:  []string{"file", "upload", "processing", "validation"},
+			},
+			"notification-system": {
+				ID:          "notification-system",
+				Name:        "Notification System",
+				Description: "Send alerts and notifications based on events",
+				Category:    "Communication",
+				Triggers:    []string{"error.occurred", "system.event", "user.created"},
+				Actions:     []string{"notification", "email.send", "log.info"},
+				Template: map[string]interface{}{
+					"name": "notification-workflow",
+					"on": map[string]interface{}{
+						"event": "error.occurred",
+					},
+					"workflow": []map[string]interface{}{
+						{"name": "log-error", "action": "log.info", "level": "error"},
+						{"name": "send-alert", "action": "notification", "channel": "slack"},
+						{"name": "email-admin", "action": "email.send", "to": "admin@company.com"},
+					},
+				},
+				Usage: 28,
+				Tags:  []string{"notification", "alert", "error", "monitoring"},
+			},
+			"ecommerce-order": {
+				ID:          "ecommerce-order",
+				Name:        "E-commerce Order Processing",
+				Description: "Handle order processing and fulfillment",
+				Category:    "E-commerce",
+				Triggers:    []string{"order.created", "payment.completed"},
+				Actions:     []string{"database.update", "email.send", "notification"},
+				Template: map[string]interface{}{
+					"name": "order-processing-workflow",
+					"on": map[string]interface{}{
+						"event": "order.created",
+					},
+					"workflow": []map[string]interface{}{
+						{"name": "validate-order", "action": "validate.input", "type": "order"},
+						{"name": "process-payment", "action": "http.request", "url": "payment-api"},
+						{"name": "update-inventory", "action": "database.update", "table": "inventory"},
+						{"name": "send-confirmation", "action": "email.send", "template": "order-confirmation"},
+						{"name": "notify-fulfillment", "action": "notification", "channel": "fulfillment-team"},
+					},
+				},
+				Usage: 38,
+				Tags:  []string{"ecommerce", "order", "payment", "fulfillment"},
+			},
+			"data-sync": {
+				ID:          "data-sync",
+				Name:        "Data Synchronization",
+				Description: "Sync data between systems and databases",
+				Category:    "Data Management",
+				Triggers:    []string{"scheduled", "database.change"},
+				Actions:     []string{"http.request", "database.insert", "transform.data"},
+				Template: map[string]interface{}{
+					"name": "data-sync-workflow",
+					"on": map[string]interface{}{
+						"event": "scheduled",
+						"cron":  "0 */6 * * *",
+					},
+					"workflow": []map[string]interface{}{
+						{"name": "fetch-source-data", "action": "http.request", "url": "{{ .source_api }}"},
+						{"name": "transform-data", "action": "transform.data", "format": "json"},
+						{"name": "sync-to-target", "action": "database.insert", "table": "synced_data"},
+						{"name": "log-sync-status", "action": "log.info", "message": "Data sync completed"},
+					},
+				},
+				Usage: 25,
+				Tags:  []string{"data", "sync", "etl", "integration"},
+			},
+			"api-monitor": {
+				ID:          "api-monitor",
+				Name:        "API Health Monitor",
+				Description: "Monitor API endpoints and alert on failures",
+				Category:    "Monitoring",
+				Triggers:    []string{"scheduled", "http.request"},
+				Actions:     []string{"http.request", "notification", "log.info"},
+				Template: map[string]interface{}{
+					"name": "api-monitor-workflow",
+					"on": map[string]interface{}{
+						"event": "scheduled",
+						"cron":  "*/5 * * * *",
+					},
+					"workflow": []map[string]interface{}{
+						{"name": "check-api-health", "action": "http.request", "url": "{{ .api_endpoint }}/health"},
+						{"name": "validate-response", "action": "validate.input", "type": "api_response"},
+						{"name": "alert-if-down", "action": "notification", "channel": "ops-team", "if": "{{ .response.status != 200 }}"},
+						{"name": "log-status", "action": "log.info", "message": "API health check completed"},
+					},
+				},
+				Usage: 22,
+				Tags:  []string{"monitoring", "api", "health", "alert"},
 			},
 		},
 	}
@@ -505,30 +618,30 @@ func (ai *AIWorkflowBuilder) validateWorkflow(workflow map[string]interface{}) m
 	results := make(map[string]interface{})
 	var issues []string
 	var suggestions []string
-	
+
 	for _, rule := range ai.validationEngine.rules {
 		if !rule.Check(workflow) {
 			issues = append(issues, rule.Description)
 			suggestions = append(suggestions, rule.Suggestion)
 		}
 	}
-	
+
 	results["valid"] = len(issues) == 0
 	results["issues"] = issues
 	results["suggestions"] = suggestions
-	
+
 	return results
 }
 
 func (ai *AIWorkflowBuilder) getPatterns(category string) []WorkflowPattern {
 	var patterns []WorkflowPattern
-	
+
 	for _, pattern := range ai.patternLibrary.Patterns {
 		if category == "" || pattern.Category == category {
 			patterns = append(patterns, pattern)
 		}
 	}
-	
+
 	return patterns
 }
 
